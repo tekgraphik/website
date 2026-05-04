@@ -1,13 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 
+// Percorsi relativi per massima portabilità
 const DB_DIR = path.join(__dirname, 'database');
-const files = fs.readdirSync(DB_DIR).filter(f => f.endsWith('.md'));
+const OUTPUT = path.join(__dirname, 'database.json');
 
-const database = files.map(f => ({
-    id: f.replace('.md', ''),
-    filename: f
-}));
+try {
+    const files = fs.readdirSync(DB_DIR)
+        .filter(f => f.endsWith('.md'))
+        .map(f => ({
+            id: f.replace('.md', ''),
+            filename: f
+        }));
 
-fs.writeFileSync('database.json', JSON.stringify(database, null, 2));
-console.log("Mappa aggiornata.");
+    fs.writeFileSync(OUTPUT, JSON.stringify(files, null, 2));
+    console.log("Index updated.");
+} catch (e) {
+    console.error("Failed to index:", e);
+}
