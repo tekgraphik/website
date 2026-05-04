@@ -1,0 +1,27 @@
+name: Update Database Index
+on:
+  push:
+    paths:
+      - 'database/**' # Si attiva solo se cambi qualcosa nel database
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Run Indexer
+        run: node indexer.js # Esegue lo script che hai già
+        
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add database.json
+          git commit -m "Update database.json [skip ci]" || exit 0
+          git push
